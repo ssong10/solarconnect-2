@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { getTimeString } from 'utils/date';
 
 const TodoHeadBlock = styled.div`
   display: flex;
@@ -22,10 +23,7 @@ const DayText = styled.div`
 `;
 
 const TodoHead = () => {
-  //@TODO 현재 시간을 표시해야합니다.
-  const dayString = "Tuesday";
-  const dateString = "July 20, 2021";
-
+  const [ dayString, dateString ] = getTimeString();
   return (
     <TodoHeadBlock>
       <DayText>{dayString}</DayText>
