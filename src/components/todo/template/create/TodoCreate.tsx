@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Itodo } from "components/todo/TodoService";
+import { errorInfo } from 'components/common/Modal'
 import { DatePicker } from 'antd';
 import moment from 'moment';
-
 type MomentDate = moment.Moment | null
 const CircleButton = styled.button<{ open: boolean }>`
   background: #33bb77;
@@ -77,22 +77,34 @@ const TodoCreate = ({
   const handleChangeDate = (date:any, dateString:string) => {
     setExpirationDate(date)
   }
+  const validation = () => {
+    if (!value.trim()) {
+      errorInfo('할 일을 입력해 주세요')
+      return false
+    }
+    if (!expirationDate) {
+      errorInfo('목표 날짜를 입력해 주세요')
+      return false
+    }
+    return true
+  }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
-
-    createTodo({
-      id: nextId,
-      text: value,
-      expirationDate: momentToString(expirationDate),
-      done: false
-    });
-    incrementNextId(); // nextId 하나 증가
-
-    setValue(""); // input 초기화
-    setExpirationDate(moment())
-    setOpen(false); // open 닫기
-  };
-
+    if (validation()) {
+      createTodo({
+        id: nextId,
+        text: value,
+        expirationDate: momentToString(expirationDate),
+        done: false
+      });
+      incrementNextId(); // nextId 하나 증가
+  
+      setValue(""); // input 초기화
+      setExpirationDate(moment())
+      setOpen(false); // open 닫기
+    }
+  }
+  
   return (
     <>
       <InsertFormPositioner>
