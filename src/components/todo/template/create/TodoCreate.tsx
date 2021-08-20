@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Itodo } from "components/todo/TodoService";
+import { DatePicker } from 'antd';
+import moment from 'moment';
 
+type MomentDate = moment.Moment | null
 const CircleButton = styled.button<{ open: boolean }>`
   background: #33bb77;
   width: 50px;
@@ -34,7 +37,9 @@ const InsertForm = styled.form`
   padding-right: 60px;
   padding-bottom: 36px;
 `;
-
+const DateSelector = styled(DatePicker)`
+  width:30%;
+`
 const Input = styled.input`
   padding: 12px;
   border: 1px solid #dddddd;
@@ -62,22 +67,29 @@ const TodoCreate = ({
 }: TodoCreateProps) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-
+  const [expirationDate, setExpirationDate] = useState<MomentDate>(moment());
   const handleToggle = () => setOpen(!open);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setValue(e.target.value);
-
+  const momentToString = (date:MomentDate) => {
+    return date ? date.format('YYYY-MM-DD') : ""
+  }
+  const handleChangeDate = (date:any, dateString:string) => {
+    setExpirationDate(date)
+  }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
 
     createTodo({
       id: nextId,
       text: value,
+      expirationDate: momentToString(expirationDate),
       done: false
     });
     incrementNextId(); // nextId 하나 증가
 
     setValue(""); // input 초기화
+    setExpirationDate(moment())
     setOpen(false); // open 닫기
   };
 
@@ -91,7 +103,11 @@ const TodoCreate = ({
             onChange={handleChange}
             value={value}
           />
-
+          <DateSelector
+            onChange={handleChangeDate}
+            placeholder="Target Date"
+            value={expirationDate}
+          />
           <CircleButton onClick={handleToggle} open={open}>
             <PlusCircleOutlined />
           </CircleButton>
