@@ -1,7 +1,10 @@
 import { CheckOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Input, DatePicker } from "antd";
 import { Itodo } from "components/todo/TodoService";
-import React from "react";
+import React, { useState } from "react";
 import styled, { css } from "styled-components";
+import moment from 'moment'
+import { errorInfo } from "components/common/Modal";
 
 const Remove = styled.div`
   display: flex;
@@ -63,31 +66,65 @@ const Text = styled.div<{ done: boolean }>`
       text-decoration: line-through;
     `}
 `;
-
+const EditInput = styled(Input)`
+  flex: 1;
+`
 interface TodoItemProps {
   toggleTodo: (id: number) => void;
   removeTodo: (id: number) => void;
   todo: Itodo;
+  editTodo: (id:number,obj:Partial<Itodo>)=> void;
 }
 
-const TodoItem = ({ toggleTodo, removeTodo, todo }: TodoItemProps) => {
+const TodoItem = ({ toggleTodo, removeTodo, todo ,editTodo }: TodoItemProps) => {
   const { id, text, done, expirationDate } = todo
+  const [ isEdit, setEdit ] = useState(false) 
+  const [ isDateEdit, setDateEdit ] = useState(false)
   const handleToggle = () => {
     toggleTodo(id)
   };
-
   const handleRemove = () => {
     removeTodo(id)
   };
+  const toggleEdit = () => setEdit(prev => !prev)
+  const toggleEditDate = () => setDateEdit(prev => !prev)
+  const closeEdit = () => {
+    setEdit(false)
+    setDateEdit(false)
+  }
+  
+  const handlerKeyPress = (e:React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      toggleEdit()
+    }
+  }
+  const handlerEnter = (e:React.SyntheticEvent<HTMLInputElement,KeyboardEvent>) => {
+    editTodo(id, {text:e.currentTarget.value})
+    setEdit(false)
+  }
+  const handlerDate = (date:moment.Moment | null, dateString:string)=> {
+    if (date) {
+      editTodo(id, { expirationDate : dateString})    
+      setDateEdit(false)
+    } else {
+      errorInfo('목표 날짜를 입력해 주세요')
+    }
+  }
 
   return (
     <TodoItemBlock>
       <CheckCircle done={done} onClick={handleToggle}>
         {done && <CheckOutlined />}
       </CheckCircle>
-      <Text done={done}>{text}</Text>
-      { expirationDate && 
-        <DateString done={done}>~ {expirationDate}</DateString>      
+      { 
+        isEdit ?
+          <EditInput autoFocus onKeyDown={handlerKeyPress} onPressEnter={handlerEnter} defaultValue={text} onBlur={closeEdit}/> :
+          <Text done={done} onDoubleClick={toggleEdit}>{text}</Text>
+      }
+      { 
+        isDateEdit ?
+          <DatePicker autoFocus onChange={handlerDate} defaultValue={moment(expirationDate ,'YYYY-MM-DD')} onBlur={closeEdit}/> :
+          <DateString done={done} onDoubleClick={toggleEditDate}>~ {expirationDate}</DateString> 
       }
       <Remove onClick={handleRemove}>
         <DeleteOutlined />

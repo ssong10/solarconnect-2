@@ -14,9 +14,10 @@ interface TodoListProps {
   todos: Itodo[];
   toggleTodo: (id: number) => void;
   removeTodo: (id: number) => void;
+  editTodo: (id:number, obj:Partial<Itodo>) => void;
 }
 
-const TodoList = ({ toggleTodo, removeTodo, todos }: TodoListProps) => {
+const TodoList = ({ toggleTodo, removeTodo, todos, editTodo }: TodoListProps) => {
   return (
     <TodoListBlock>
       {todos &&
@@ -26,6 +27,7 @@ const TodoList = ({ toggleTodo, removeTodo, todos }: TodoListProps) => {
             removeTodo={removeTodo}
             key={todo.id}
             todo={todo}
+            editTodo={editTodo}
           />
         ))}
     </TodoListBlock>

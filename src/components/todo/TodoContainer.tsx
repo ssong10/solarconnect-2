@@ -11,6 +11,7 @@ const TodoContainer = () => {
     toggleTodo,
     removeTodo,
     createTodo,
+    editTodo,
     sortByCreate,
     sortByGoal,
     removeCompletedTodo
@@ -31,6 +32,7 @@ const TodoContainer = () => {
         <TodoList
           toggleTodo={toggleTodo}
           removeTodo={removeTodo}
+          editTodo={editTodo}
           todos={todoState}
         />
         <TodoFooter todos={todoState} />

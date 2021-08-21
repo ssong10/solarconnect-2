@@ -5,7 +5,7 @@ export type Itodo = {
   id: number;
   text: string;
   done: boolean;
-  expirationDate: String;
+  expirationDate: string;
 };
 
 let initialTodos: Itodo[] = [];
@@ -67,7 +67,19 @@ export const useTodo = () => {
       prevState.concat(todo)
     );
   };
-
+  const editTodo = (id:number, obj:Partial<Itodo>) => {
+    setTodoState(prevState => 
+      prevState.map(todo => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            ...obj,
+          }
+        }
+        return todo
+      })
+    )
+  }
   const loadData = () => {
     let data = localStorage.getItem("todos");
     initialTodos = JSON.parse(data!) || []
@@ -85,6 +97,7 @@ export const useTodo = () => {
     createTodo,
     sortByCreate,
     sortByGoal,
-    removeCompletedTodo
+    removeCompletedTodo,
+    editTodo,
   };
 };
