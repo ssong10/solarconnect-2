@@ -4,15 +4,16 @@ import TodoHead from "./template/head/TodoHead";
 import TodoList from "./template/list/TodoList";
 import TodoCreate from "./template/create/TodoCreate";
 import TodoFooter from "./template/footer/TodoFooter";
-
+import TodoController from './template/controller/TodoController'
 const TodoContainer = () => {
   const {
     todoState,
-    nextIdState,
-    incrementNextId,
     toggleTodo,
     removeTodo,
     createTodo,
+    sortByCreate,
+    sortByGoal,
+    removeCompletedTodo
   } = useTodo();
   
   return (
@@ -20,10 +21,13 @@ const TodoContainer = () => {
       <TodoTemplate>
         <TodoHead />
         <TodoCreate
-          nextId={nextIdState}
           createTodo={createTodo}
-          incrementNextId={incrementNextId}
         />
+        <TodoController
+          sortByCreate={sortByCreate}
+          sortByGoal={sortByGoal}
+          removeCompletedTodo={removeCompletedTodo}
+        ></TodoController>
         <TodoList
           toggleTodo={toggleTodo}
           removeTodo={removeTodo}

@@ -12,19 +12,32 @@ let initialTodos: Itodo[] = [];
 
 export const useTodo = () => {
   const [ todoState, setTodoState] = useState(initialTodos);
-  const [ nextIdState, setNextIdState ] = useState(1)
   useEffect(() => {
     loadData();
   }, []);
 
   useEffect(() => {
+    console.log(todoState)
     saveData();
   }, [todoState]);
 
-  const incrementNextId = () => {
-    setNextIdState(prev => prev + 1)
-  };
-
+  const sortByCreate = () => {
+    console.log('created sort')
+    setTodoState(prevState => 
+      [...prevState].sort((a,b)=> a.id - b.id)
+    )
+  }
+  const sortByGoal = () => {
+    console.log('goal sort')
+    setTodoState(prevState => 
+      [...prevState].sort((a,b) => a.expirationDate < b.expirationDate ? -1 : 1)
+    )
+  }
+  const removeCompletedTodo = () => {
+    setTodoState(prevState => 
+      prevState.filter(todo => !todo.done)  
+    )
+  }
   const toggleTodo = (id: number) => {
     //@
     console.log('toggle',id)
@@ -59,9 +72,6 @@ export const useTodo = () => {
     let data = localStorage.getItem("todos");
     initialTodos = JSON.parse(data!) || []
     setTodoState(initialTodos);
-    if (initialTodos.length) {
-      setNextIdState(initialTodos[initialTodos.length-1].id+1)
-    }
   };
 
   const saveData = () => {
@@ -70,10 +80,11 @@ export const useTodo = () => {
 
   return {
     todoState,
-    nextIdState,
-    incrementNextId,
     toggleTodo,
     removeTodo,
-    createTodo
+    createTodo,
+    sortByCreate,
+    sortByGoal,
+    removeCompletedTodo
   };
 };

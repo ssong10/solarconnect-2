@@ -55,15 +55,11 @@ const Input = styled.input`
 `;
 
 interface TodoCreateProps {
-  nextId: number;
   createTodo: (todo: Itodo) => void;
-  incrementNextId: () => void;
 }
 
 const TodoCreate = ({
-  nextId,
   createTodo,
-  incrementNextId
 }: TodoCreateProps) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -92,13 +88,11 @@ const TodoCreate = ({
     e.preventDefault(); // 새로고침 방지
     if (validation()) {
       createTodo({
-        id: nextId,
+        id: moment.now(),
         text: value,
         expirationDate: momentToString(expirationDate),
         done: false
-      });
-      incrementNextId(); // nextId 하나 증가
-  
+      });  
       setValue(""); // input 초기화
       setExpirationDate(moment())
       setOpen(false); // open 닫기
